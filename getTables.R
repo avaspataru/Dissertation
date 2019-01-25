@@ -1,0 +1,5 @@
+pre_genes_clusters = paste(dataobj.markers$gene, "-",dataobj.markers$cluster, "-", dataobj.markers$avg_logFC)
+write.table(pre_genes_clusters, "preGenesClusters.txt", append = FALSE, sep = " ", dec = ".", row.names = TRUE, col.names = TRUE)
+clusterassignments = GetClusters(dataobj)
+pre_cell_clusters = paste(clusterassignments$cell.name, "-",clusterassignments$cluster)
+write.table(pre_cell_clusters, "preCellClusters.txt", append = FALSE, sep = " ", dec = ".", row.names = TRUE, col.names = TRUE)
