@@ -53,59 +53,35 @@ def main():
     pre_clusters = pre_data['cluster_id'].unique()
     post_clusters = post_data['cluster_id'].unique()
 
-    top_n = 10
-    if(top_n ==-1):
-        for i in pre_clusters:
-            print "-------------------------------------------------------------------"
-            losses = []
-            for j in post_clusters:
-                pre_cluster = pre_data.loc[pre_data['cluster_id'] == i]
-                post_cluster = post_data.loc[post_data['cluster_id']==j]
+    top_n = input ("Enter the number of genes to look at (-1 if all):")
+    for i in pre_clusters:
+        print "-------------------------------------------------------------------"
+        losses = []
+        for j in post_clusters:
+            pre_cluster = pre_data.loc[pre_data['cluster_id'] == i]
+            post_cluster = post_data.loc[post_data['cluster_id']==j]
 
+            if(top_n == -1):
                 lookup_genes = pre_cluster['gene'].unique()
-                loss = 0
-                ngene = lookup_genes.size
-                for gene in lookup_genes:
-                    avg_expr_pre = pre_cluster.loc[pre_cluster['gene'] == gene]['avg_expr'].item()
-                    if(post_cluster.loc[post_cluster['gene'] == gene].empty): #gene doesn't exist in post cluster
-                        loss = loss + avg_expr_pre*avg_expr_pre
-                        continue
-                    avg_expr_post = post_cluster.loc[post_cluster['gene'] == gene]['avg_expr'].item()
-                    #print avg_expr_pre
-                    loss = loss + (avg_expr_pre - avg_expr_post) *  (avg_expr_pre - avg_expr_post)
-
-                lookup_genes = post_cluster['gene'].unique()
-                for gene in lookup_genes:
-                    avg_expr_pre = post_cluster.loc[post_cluster['gene'] == gene]['avg_expr'].item()
-                    if(pre_cluster.loc[pre_cluster['gene'] == gene].empty): #gene doesn't exist in post cluster
-                        loss = loss + avg_expr_post*avg_expr_post
-                        ngene = ngene+ 1
-                loss = loss / ngene
-                losses = losses + [loss]
-                print "compare pre_" + str(i) + ", post_" + str(j) + ": loss " + str(loss) + "; looked at " + str(ngene) + " genes."
-            #losses = scale( losses, axis=0, with_mean=True, with_std=True, copy=True )
-            #print losses
-    else:
-        for i in pre_clusters:
-            print "-------------------------------------------------------------------"
-            for j in post_clusters:
-                pre_cluster = pre_data.loc[pre_data['cluster_id'] == i]
-                post_cluster = post_data.loc[post_data['cluster_id']==j]
-
+            else:
                 top_genes = pre_cluster.nlargest(top_n,'avg_expr')
                 lookup_genes = top_genes['gene'].unique()
-                loss = 0
-                ngene = lookup_genes.size
-                for gene in lookup_genes:
-                    avg_expr_pre = pre_cluster.loc[pre_cluster['gene'] == gene]['avg_expr'].item()
-                    if(post_cluster.loc[post_cluster['gene'] == gene].empty): #gene doesn't exist in post cluster
-                        loss = loss + avg_expr_pre*avg_expr_pre
-                        continue
-                    avg_expr_post = post_cluster.loc[post_cluster['gene'] == gene]['avg_expr'].item()
+            loss = 0
+            ngene = lookup_genes.size
+            for gene in lookup_genes:
+                avg_expr_pre = pre_cluster.loc[pre_cluster['gene'] == gene]['avg_expr'].item()
+                if(post_cluster.loc[post_cluster['gene'] == gene].empty): #gene doesn't exist in post cluster
+                    loss = loss + avg_expr_pre*avg_expr_pre
+                    continue
+                avg_expr_post = post_cluster.loc[post_cluster['gene'] == gene]['avg_expr'].item()
+                #print avg_expr_pre
+                loss = loss + (avg_expr_pre - avg_expr_post) *  (avg_expr_pre - avg_expr_post)
 
-                    loss = loss + (avg_expr_pre - avg_expr_post) *  (avg_expr_pre - avg_expr_post)
-                loss = loss / ngene
-                print "compare pre_" + str(i) + ", post_" + str(j) + ": loss " + str(loss) + "; looked at " + str(ngene) + " genes."
+            loss = loss / ngene
+            losses = losses + [loss]
+            print "compare pre_" + str(i) + ", post_" + str(j) + ": loss " + str(loss) + "; looked at " + str(ngene) + " genes."
+            #losses = scale( losses, axis=0, with_mean=True, with_std=True, copy=True )
+            #print losses
 
 
 main()
