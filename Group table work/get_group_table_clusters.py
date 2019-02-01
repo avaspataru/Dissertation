@@ -8,10 +8,10 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import scale
 
-def readData(fileName):
+def readData(fileName,outfileName):
     fp = open( fileName, 'r')
 
-    output_fileName = fileName+"_group_table.txt"
+    output_fileName = outfileName+"_group_table.txt"
     fout = open(output_fileName, "w") #clean the file
     fout = open(output_fileName, "a")
 
@@ -38,7 +38,7 @@ def readData(fileName):
 
 
 def main():
-    pre_data = readData("files/preCellClusters.txt");
-    post_data = readData("files/postCellClusters.txt");
+    pre_data = readData("files/preCellClusters.txt","patient9_pre");
+    post_data = readData("files/postCellClusters.txt","patient9_post");
 
 main()
